@@ -4,22 +4,22 @@ module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader)
-    return res.status(401).send({ msg: 'no token provided' });
+    return res.status(401).send({ error: 'no token provided' });
 
   const parts = authHeader.split(' ');
   if (parts.length !== 2)
-    return res.status(401).send({ msg: 'token error' });
+    return res.status(401).send({ error: 'token error' });
 
   const [bearer, token] = parts;
   if (!/^Bearer$/i.test(bearer))
-    return res.status(401).send({ msg: 'token malformatted' });
+    return res.status(401).send({ error: 'token malformatted' });
 
   jwt.verify(token, process.env.SECRET, (err, decoded) => {
     if (err)
-      return res.status(401).send({ msg: 'token invalid' });
+      return res.status(401).send({ error: 'token invalid' });
 
     req.id = decoded.id;
-    req.isAdmin = decoded.isAdmin;
+    req.is_admin = decoded.is_admin;
 
     return next();
   });
